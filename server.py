@@ -2,11 +2,10 @@ import select
 import socket
 
 
-MD5_HASH = 'ec9c0f7edcc18a98b1f31853b1813301' # needs to be found!
-# MD5_HASH = '81dc9bdb52d04dc20036dbd8313ed055'  # 1234
+MD5_HASH = 'ec9c0f7edcc18a98b1f31853b1813301'
 DIGITS = 10
 NOT_FOUND_YET = '.' * DIGITS
-IP = '192.168.11.149'
+IP = '192.168.1.214'
 PORT = 9999
 CHUNK = 100000
 messages_to_send = {}
@@ -21,17 +20,10 @@ def setup_server():
     return server_socket
 
 
-def disconnect_client(client):
-    client_sockets.remove(client)
-    client.close()
-
-
 def main():
-    start = 0
+    start = 1000000000
     found = False
     answer = ''
-    data = ''
-    msg_to_send = f'{start}.{CHUNK}'
     server_socket = setup_server()
     print("Listening for clients...")
     while not found or len(client_sockets) != 0:
@@ -52,7 +44,6 @@ def main():
                 except Exception:
                     client_sockets.remove(current_socket)
                     current_socket.close()
-
                 else:
                     if not found:
                         if data.startswith('CORES.') and data[6:].isnumeric():
@@ -72,14 +63,14 @@ def main():
                     else:
                         if data == 'BYE.':
                             client_sockets.remove(current_socket)
-                            disconnect_client(current_socket)
+                            current_socket.close()
 
         for current_socket in ready_to_write:
             if current_socket in messages_to_send:
                 current_socket.send(messages_to_send[current_socket].encode())
                 messages_to_send.pop(current_socket)
 
-    print(answer)
+    print(f"number is: {answer}")
     server_socket.close()
 
 
