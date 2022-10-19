@@ -1,12 +1,8 @@
 import socket
 import multiprocessing
 import hashlib
-# my_socket = socket.socket()
-    # my_socket.connect((IP, PORT))
-    # md5_hash = my_socket.recv(1024).decode()
-    # my_socket.send(str(CORES).encode())
 
-IP = '127.0.0.1'
+IP = '192.168.11.149'
 PORT = 9999
 CORES = multiprocessing.cpu_count()
 
@@ -28,13 +24,14 @@ def main():
     sock.connect((IP, PORT))
     sock.send(f'CORES.{CORES}'.encode())
     data = sock.recv(1024).decode()
-    print(data)
     md5_hash, digits = data.split('.')[0], int(data.split('.')[1])
     found = multiprocessing.Value('b', False)
     answer = multiprocessing.Array('c', ('.' * digits).encode())
+    sock.send(answer.value)
 
-    while not found.value():
+    while not found.value:
         data = sock.recv(1024).decode()
+        print(data)
         if data.isnumeric():
             break
 
@@ -49,8 +46,11 @@ def main():
         for process in p:
             process.join()
 
-        sock.send(answer.value().decode())
+        sock.send(answer.value)
         print(answer.value)
+
+    sock.send('BYE.'.encode())
+    sock.close()
 
 
 if __name__ == '__main__':

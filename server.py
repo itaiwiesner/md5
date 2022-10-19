@@ -2,13 +2,13 @@ import select
 import socket
 
 
-# MD5_HASH = '202cb962ac59075b964b07152d234b70' # needs to be found!
-MD5_HASH = '81dc9bdb52d04dc20036dbd8313ed055'  # 1234
-DIGITS = 4
+MD5_HASH = 'ec9c0f7edcc18a98b1f31853b1813301' # needs to be found!
+# MD5_HASH = '81dc9bdb52d04dc20036dbd8313ed055'  # 1234
+DIGITS = 10
 NOT_FOUND_YET = '.' * DIGITS
-IP = '0.0.0.0'
+IP = '192.168.11.149'
 PORT = 9999
-CHUNK = 1000
+CHUNK = 100000
 messages_to_send = {}
 client_sockets = []
 client_to_cores = {}
@@ -54,7 +54,6 @@ def main():
                     current_socket.close()
 
                 else:
-                    print(data)
                     if not found:
                         if data.startswith('CORES.') and data[6:].isnumeric():
                             client_to_cores[current_socket] = int(data[6:])
@@ -78,7 +77,6 @@ def main():
         for current_socket in ready_to_write:
             if current_socket in messages_to_send:
                 current_socket.send(messages_to_send[current_socket].encode())
-                print(messages_to_send[current_socket])
                 messages_to_send.pop(current_socket)
 
     print(answer)
