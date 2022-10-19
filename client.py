@@ -2,7 +2,7 @@ import socket
 import multiprocessing
 import hashlib
 
-IP = '192.168.11.149'
+IP = '192.168.1.214'
 PORT = 9999
 CORES = multiprocessing.cpu_count()
 
@@ -31,7 +31,7 @@ def main():
 
     while not found.value:
         data = sock.recv(1024).decode()
-        print(data)
+        print(f'data from server: {data}')
         if data.isnumeric():
             break
 
@@ -46,11 +46,15 @@ def main():
         for process in p:
             process.join()
 
+        print(f"data to the server: {answer.value.decode()}")
         sock.send(answer.value)
-        print(answer.value)
 
     sock.send('BYE.'.encode())
     sock.close()
+
+
+if __name__ == '__main__':
+    main()
 
 
 if __name__ == '__main__':
